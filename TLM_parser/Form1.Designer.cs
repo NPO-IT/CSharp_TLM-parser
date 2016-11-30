@@ -28,23 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.rtbMemoshka = new System.Windows.Forms.RichTextBox();
             this.btnParse = new System.Windows.Forms.Button();
             this.tbHeader = new System.Windows.Forms.TextBox();
-            this.tmrShow = new System.Windows.Forms.Timer(this.components);
-            this.chartShow = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            ((System.ComponentModel.ISupportInitialize)(this.chartShow)).BeginInit();
+            this.lbCycles = new System.Windows.Forms.ListBox();
+            this.pbMain = new System.Windows.Forms.ProgressBar();
+            this.btnPick = new System.Windows.Forms.Button();
+            this.tbShift = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // rtbMemoshka
             // 
-            this.rtbMemoshka.Location = new System.Drawing.Point(12, 380);
+            this.rtbMemoshka.Location = new System.Drawing.Point(12, 41);
             this.rtbMemoshka.Name = "rtbMemoshka";
-            this.rtbMemoshka.Size = new System.Drawing.Size(424, 248);
+            this.rtbMemoshka.Size = new System.Drawing.Size(449, 587);
             this.rtbMemoshka.TabIndex = 0;
             this.rtbMemoshka.Text = "";
             // 
@@ -60,47 +57,62 @@
             // 
             // tbHeader
             // 
-            this.tbHeader.Location = new System.Drawing.Point(442, 380);
+            this.tbHeader.Location = new System.Drawing.Point(467, 113);
             this.tbHeader.Multiline = true;
             this.tbHeader.Name = "tbHeader";
-            this.tbHeader.Size = new System.Drawing.Size(189, 248);
+            this.tbHeader.Size = new System.Drawing.Size(166, 206);
             this.tbHeader.TabIndex = 2;
             // 
-            // tmrShow
+            // lbCycles
             // 
-            this.tmrShow.Interval = 30;
-            this.tmrShow.Tick += new System.EventHandler(this.tmrShow_Tick);
+            this.lbCycles.FormattingEnabled = true;
+            this.lbCycles.Location = new System.Drawing.Point(467, 12);
+            this.lbCycles.Name = "lbCycles";
+            this.lbCycles.Size = new System.Drawing.Size(166, 95);
+            this.lbCycles.TabIndex = 3;
+            this.lbCycles.SelectedIndexChanged += new System.EventHandler(this.lbCycles_SelectedIndexChanged);
             // 
-            // chartShow
+            // pbMain
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartShow.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartShow.Legends.Add(legend1);
-            this.chartShow.Location = new System.Drawing.Point(12, 41);
-            this.chartShow.Name = "chartShow";
-            series1.ChartArea = "ChartArea1";
-            series1.IsValueShownAsLabel = true;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartShow.Series.Add(series1);
-            this.chartShow.Size = new System.Drawing.Size(619, 333);
-            this.chartShow.TabIndex = 3;
-            this.chartShow.Text = "chart1";
+            this.pbMain.Location = new System.Drawing.Point(93, 12);
+            this.pbMain.Name = "pbMain";
+            this.pbMain.Size = new System.Drawing.Size(368, 23);
+            this.pbMain.TabIndex = 4;
+            // 
+            // btnPick
+            // 
+            this.btnPick.Enabled = false;
+            this.btnPick.Location = new System.Drawing.Point(467, 325);
+            this.btnPick.Name = "btnPick";
+            this.btnPick.Size = new System.Drawing.Size(100, 23);
+            this.btnPick.TabIndex = 5;
+            this.btnPick.Text = "Show N-th words";
+            this.btnPick.UseVisualStyleBackColor = true;
+            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
+            // 
+            // tbShift
+            // 
+            this.tbShift.Location = new System.Drawing.Point(573, 327);
+            this.tbShift.Name = "tbShift";
+            this.tbShift.Size = new System.Drawing.Size(60, 20);
+            this.tbShift.TabIndex = 6;
+            this.tbShift.Text = "0";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(645, 640);
-            this.Controls.Add(this.chartShow);
+            this.Controls.Add(this.tbShift);
+            this.Controls.Add(this.btnPick);
+            this.Controls.Add(this.pbMain);
+            this.Controls.Add(this.lbCycles);
             this.Controls.Add(this.tbHeader);
             this.Controls.Add(this.btnParse);
             this.Controls.Add(this.rtbMemoshka);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "frmMain";
             this.Text = "TLM Parser";
-            ((System.ComponentModel.ISupportInitialize)(this.chartShow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,8 +123,10 @@
         private System.Windows.Forms.RichTextBox rtbMemoshka;
         private System.Windows.Forms.Button btnParse;
         private System.Windows.Forms.TextBox tbHeader;
-        private System.Windows.Forms.Timer tmrShow;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartShow;
+        private System.Windows.Forms.ListBox lbCycles;
+        private System.Windows.Forms.ProgressBar pbMain;
+        private System.Windows.Forms.Button btnPick;
+        private System.Windows.Forms.TextBox tbShift;
     }
 }
 

@@ -18,35 +18,9 @@ namespace TLM_parser
         private int chartHeight = 4096;
         private int tlmBlockSize = 65536;
 
-        private void chartInit()
-        {
-            int[] chartEnum = new int[128];
-
-            chartShow.ChartAreas[0].AxisY.Minimum = 0;
-            chartShow.ChartAreas[0].AxisY.Maximum = chartHeight;
-            chartShow.ChartAreas[0].AxisY.Interval = 128;
-            chartShow.ChartAreas[0].AxisX.Minimum = 0;
-            chartShow.ChartAreas[0].AxisX.Maximum = chartWidth;
-            chartShow.ChartAreas[0].AxisX.Interval = 16;
-            chartShow.Series["Series1"].IsVisibleInLegend = false;
-            chartShow.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartShow.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartShow.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
-            chartShow.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartShow.ChartAreas[0].CursorX.IsUserEnabled = true;
-            chartShow.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chartShow.ChartAreas[0].CursorX.SelectionColor = Color.LightGray;
-            for (int i = 0; i < chartWidth; i++)
-            {
-                chartEnum[i] = i;
-                chartShow.Series["Series1"].Points.AddXY(chartEnum[i], 0);
-            }
-
-        }
         public frmMain()
         {
             InitializeComponent();
-            chartInit();
         }
 
         private void btnParse_Click(object sender, EventArgs e)
@@ -60,6 +34,7 @@ namespace TLM_parser
 
             if (ofdSelectTLM.ShowDialog() == DialogResult.OK)
             {
+                rtbMemoshka.Clear();
                 using (FileStream fsSource = new FileStream(ofdSelectTLM.FileName, FileMode.Open, FileAccess.Read))
                 {
                     /*
@@ -88,50 +63,60 @@ namespace TLM_parser
                         {
                             body[(i - startPtr) / 2] = (byte)fsSource.ReadByte();
                             body[(i - startPtr) / 2] += ((byte)fsSource.ReadByte() << 8);
+                            body[(i - startPtr) / 2] = (body[(i - startPtr) / 2] >> 1) & 0x3F;
                         }
+                        lbCycles.Items.Add(String.Format("Cycle #{0}", bigDataIn.Count + 1));
                         bigDataIn.Add(body);
                         startPtr = endPtr + 32;
                         endPtr += tlmBlockSize + 32;
                         for (int i = 0; i < 32; i++)
                             fsSource.ReadByte();
                     }
-                    /*
-                     * enable timer to show values
-                     */
-                    for (int i = 16; i < bigDataIn[0].Length; i++)
-                    {
-                        if ((i % 8 == 0) && (i != 16))
-                        {
-                            rtbMemoshka.AppendText("\r\n");
-                        }
-                        rtbMemoshka.AppendText(bigDataIn[0][i].ToString() + "\t");
-                    }
-                    tmrShow.Enabled = true;
-
                 }
             }
         }
 
-        private void tmrShow_Tick(object sender, EventArgs e)
+        private void lbCycles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //foreach (var cycle in bigDataIn)
-            //{
-                int cntGrp = 0;
-                int[] chartEnum = new int[1024];
-                int[] group = new int[1024];
+            rtbMemoshka.Clear();
+            lbCycles.Enabled = false;
+            int index;
+            pbMain.Value = 0;
+            int.TryParse(lbCycles.GetItemText(lbCycles.SelectedItem).Split('#')[1], out index);
+            double progress = 0.0f;
+            double step = 100.0f / (bigDataIn[index].Length - 16);
 
-                for (int i = 0; i < group.Length; i++)
+            for (int i = 16; i < bigDataIn[index].Length; i++)
+            {
+                if ((i % 8 == 0) && (i != 16))
                 {
-                    group[i] = bigDataIn[0][i*cntGrp];// cycle[i*cntGrp];
+                    rtbMemoshka.AppendText("\r\n");
                 }
-                cntGrp++;
+                rtbMemoshka.AppendText(bigDataIn[index][i].ToString() + "\t");
+                progress += step;
+                pbMain.Value = (int)progress;
+            }
+            pbMain.Value = 100;
+            lbCycles.Enabled = true;
+            btnPick.Enabled = true;
+        }
 
-                for (int i = 0; i < 128; i++)
+        private void btnPick_Click(object sender, EventArgs e)
+        {
+            int index;
+            int shift;
+            int.TryParse(lbCycles.GetItemText(lbCycles.SelectedItem).Split('#')[1], out index);
+            int.TryParse(tbShift.Text, out shift);
+            rtbMemoshka.Clear();
+            for (int i = shift + 16; i < bigDataIn[index].Length; i+=32)
+            {
+                if (((i - (shift + 16)) % 256 == 0) && (i != (shift + 16)))
                 {
-                    chartEnum[i] = i;
-                    chartShow.Series["Series1"].Points.AddXY(chartEnum[i], group[i]);
+                    rtbMemoshka.AppendText("\r\n");
                 }
-            //}
+                rtbMemoshka.AppendText(bigDataIn[index][i].ToString() + "\t");
+            }
+
         }
     }
 }
