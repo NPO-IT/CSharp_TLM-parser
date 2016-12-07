@@ -63,7 +63,7 @@ namespace TLM_parser
                         {
                             body[(i - startPtr) / 2] = (byte)fsSource.ReadByte();
                             body[(i - startPtr) / 2] += ((byte)fsSource.ReadByte() << 8);
-                            body[(i - startPtr) / 2] = (body[(i - startPtr) / 2] >> 1) & 0x3F;
+                            body[(i - startPtr) / 2] = (body[(i - startPtr) / 2] >> 3) & 0xFF;
                         }
                         lbCycles.Items.Add(String.Format("Cycle #{0}", bigDataIn.Count + 1));
                         bigDataIn.Add(body);
