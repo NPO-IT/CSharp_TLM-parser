@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TLM_parser
@@ -63,7 +58,7 @@ namespace TLM_parser
                         {
                             body[(i - startPtr) / 2] = (byte)fsSource.ReadByte();
                             body[(i - startPtr) / 2] += ((byte)fsSource.ReadByte() << 8);
-                            body[(i - startPtr) / 2] = (body[(i - startPtr) / 2] >> 1) & 0x3F;
+                            body[(i - startPtr) / 2] = (body[(i - startPtr) / 2] >> 1);
                         }
                         lbCycles.Items.Add(String.Format("Cycle #{0}", bigDataIn.Count + 1));
                         bigDataIn.Add(body);
@@ -92,31 +87,15 @@ namespace TLM_parser
                 {
                     rtbMemoshka.AppendText("\r\n");
                 }
-                rtbMemoshka.AppendText(bigDataIn[index][i].ToString() + "\t");
+                //rtbMemoshka.AppendText(bigDataIn[index][i].ToString() + "\t");
+                rtbMemoshka.AppendText(Convert.ToString(bigDataIn[index][i], 2).PadLeft(11, '0') + "\t");
                 progress += step;
                 pbMain.Value = (int)progress;
             }
             pbMain.Value = 100;
             lbCycles.Enabled = true;
-            btnPick.Enabled = true;
+            Clipboard.SetText(rtbMemoshka.Text);
         }
 
-        private void btnPick_Click(object sender, EventArgs e)
-        {
-            int index;
-            int shift;
-            int.TryParse(lbCycles.GetItemText(lbCycles.SelectedItem).Split('#')[1], out index);
-            int.TryParse(tbShift.Text, out shift);
-            rtbMemoshka.Clear();
-            for (int i = shift + 16; i < bigDataIn[index].Length; i+=32)
-            {
-                if (((i - (shift + 16)) % 256 == 0) && (i != (shift + 16)))
-                {
-                    rtbMemoshka.AppendText("\r\n");
-                }
-                rtbMemoshka.AppendText(bigDataIn[index][i].ToString() + "\t");
-            }
-
-        }
     }
 }

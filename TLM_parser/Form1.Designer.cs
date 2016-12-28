@@ -33,15 +33,13 @@
             this.tbHeader = new System.Windows.Forms.TextBox();
             this.lbCycles = new System.Windows.Forms.ListBox();
             this.pbMain = new System.Windows.Forms.ProgressBar();
-            this.btnPick = new System.Windows.Forms.Button();
-            this.tbShift = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // rtbMemoshka
             // 
             this.rtbMemoshka.Location = new System.Drawing.Point(12, 41);
             this.rtbMemoshka.Name = "rtbMemoshka";
-            this.rtbMemoshka.Size = new System.Drawing.Size(449, 587);
+            this.rtbMemoshka.Size = new System.Drawing.Size(801, 587);
             this.rtbMemoshka.TabIndex = 0;
             this.rtbMemoshka.Text = "";
             // 
@@ -57,7 +55,7 @@
             // 
             // tbHeader
             // 
-            this.tbHeader.Location = new System.Drawing.Point(467, 113);
+            this.tbHeader.Location = new System.Drawing.Point(819, 113);
             this.tbHeader.Multiline = true;
             this.tbHeader.Name = "tbHeader";
             this.tbHeader.Size = new System.Drawing.Size(166, 206);
@@ -66,7 +64,7 @@
             // lbCycles
             // 
             this.lbCycles.FormattingEnabled = true;
-            this.lbCycles.Location = new System.Drawing.Point(467, 12);
+            this.lbCycles.Location = new System.Drawing.Point(819, 12);
             this.lbCycles.Name = "lbCycles";
             this.lbCycles.Size = new System.Drawing.Size(166, 95);
             this.lbCycles.TabIndex = 3;
@@ -76,35 +74,14 @@
             // 
             this.pbMain.Location = new System.Drawing.Point(93, 12);
             this.pbMain.Name = "pbMain";
-            this.pbMain.Size = new System.Drawing.Size(368, 23);
+            this.pbMain.Size = new System.Drawing.Size(720, 23);
             this.pbMain.TabIndex = 4;
-            // 
-            // btnPick
-            // 
-            this.btnPick.Enabled = false;
-            this.btnPick.Location = new System.Drawing.Point(467, 325);
-            this.btnPick.Name = "btnPick";
-            this.btnPick.Size = new System.Drawing.Size(100, 23);
-            this.btnPick.TabIndex = 5;
-            this.btnPick.Text = "Show N-th words";
-            this.btnPick.UseVisualStyleBackColor = true;
-            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
-            // 
-            // tbShift
-            // 
-            this.tbShift.Location = new System.Drawing.Point(573, 327);
-            this.tbShift.Name = "tbShift";
-            this.tbShift.Size = new System.Drawing.Size(60, 20);
-            this.tbShift.TabIndex = 6;
-            this.tbShift.Text = "0";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(645, 640);
-            this.Controls.Add(this.tbShift);
-            this.Controls.Add(this.btnPick);
+            this.ClientSize = new System.Drawing.Size(998, 640);
             this.Controls.Add(this.pbMain);
             this.Controls.Add(this.lbCycles);
             this.Controls.Add(this.tbHeader);
@@ -125,8 +102,6 @@
         private System.Windows.Forms.TextBox tbHeader;
         private System.Windows.Forms.ListBox lbCycles;
         private System.Windows.Forms.ProgressBar pbMain;
-        private System.Windows.Forms.Button btnPick;
-        private System.Windows.Forms.TextBox tbShift;
     }
 }
 
