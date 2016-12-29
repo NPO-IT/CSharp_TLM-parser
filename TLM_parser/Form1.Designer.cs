@@ -33,13 +33,14 @@
             this.tbHeader = new System.Windows.Forms.TextBox();
             this.lbCycles = new System.Windows.Forms.ListBox();
             this.pbMain = new System.Windows.Forms.ProgressBar();
+            this.lbDigital = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // rtbMemoshka
             // 
             this.rtbMemoshka.Location = new System.Drawing.Point(12, 41);
             this.rtbMemoshka.Name = "rtbMemoshka";
-            this.rtbMemoshka.Size = new System.Drawing.Size(801, 587);
+            this.rtbMemoshka.Size = new System.Drawing.Size(686, 587);
             this.rtbMemoshka.TabIndex = 0;
             this.rtbMemoshka.Text = "";
             // 
@@ -55,7 +56,7 @@
             // 
             // tbHeader
             // 
-            this.tbHeader.Location = new System.Drawing.Point(819, 113);
+            this.tbHeader.Location = new System.Drawing.Point(706, 422);
             this.tbHeader.Multiline = true;
             this.tbHeader.Name = "tbHeader";
             this.tbHeader.Size = new System.Drawing.Size(166, 206);
@@ -64,7 +65,7 @@
             // lbCycles
             // 
             this.lbCycles.FormattingEnabled = true;
-            this.lbCycles.Location = new System.Drawing.Point(819, 12);
+            this.lbCycles.Location = new System.Drawing.Point(706, 12);
             this.lbCycles.Name = "lbCycles";
             this.lbCycles.Size = new System.Drawing.Size(166, 95);
             this.lbCycles.TabIndex = 3;
@@ -74,14 +75,24 @@
             // 
             this.pbMain.Location = new System.Drawing.Point(93, 12);
             this.pbMain.Name = "pbMain";
-            this.pbMain.Size = new System.Drawing.Size(720, 23);
+            this.pbMain.Size = new System.Drawing.Size(605, 23);
             this.pbMain.TabIndex = 4;
+            // 
+            // lbDigital
+            // 
+            this.lbDigital.FormattingEnabled = true;
+            this.lbDigital.Location = new System.Drawing.Point(706, 113);
+            this.lbDigital.Name = "lbDigital";
+            this.lbDigital.Size = new System.Drawing.Size(166, 147);
+            this.lbDigital.TabIndex = 5;
+            this.lbDigital.SelectedIndexChanged += new System.EventHandler(this.lbDigital_SelectedIndexChanged);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(998, 640);
+            this.ClientSize = new System.Drawing.Size(884, 640);
+            this.Controls.Add(this.lbDigital);
             this.Controls.Add(this.pbMain);
             this.Controls.Add(this.lbCycles);
             this.Controls.Add(this.tbHeader);
@@ -102,6 +113,7 @@
         private System.Windows.Forms.TextBox tbHeader;
         private System.Windows.Forms.ListBox lbCycles;
         private System.Windows.Forms.ProgressBar pbMain;
+        private System.Windows.Forms.ListBox lbDigital;
     }
 }
 
