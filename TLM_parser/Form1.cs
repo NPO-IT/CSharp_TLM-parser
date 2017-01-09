@@ -9,14 +9,11 @@ namespace TLM_parser
     public partial class frmMain : Form
     {
         private List<int[]> bigDataIn = new List<int[]>();
-        private List<int[]> bigDigitalInfo = new List<int[]>();
+        private List<uint[]> bigDigitalInfo = new List<uint[]>();
         private int tlmBlockSize = 65536;
 
-        private String Mh = "11111001101";    //1997
-        private String Mm = "00100001010";    //266
-        private String Ml = "11101100011";    //1891
-        private String B  = "11100110101";    //1845
-
+        private String M = "1111100110100100001010111011000";
+        private String B = "1111100110101";
 
         public frmMain()
         {
@@ -74,35 +71,103 @@ namespace TLM_parser
                             sourceFile.ReadByte();
                     }
 
-
-
-                    //pick digital info
-                    int[] digitalFrame = new int[32768];
-                    foreach (var arr in bigDataIn)
+                    BinaryWriter dataOut;
+                    String fileName = "d:/digital.bin";
+                    try
                     {
-                        int digitalCounter = 0;
-                        for (int i = 0; i < arr.Length; i++)
+                        dataOut = new BinaryWriter(new FileStream(fileName, FileMode.Create));
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine("Ошибка открытия файла: " + ex.Message);
+                        return;
+                    }
+                    try
+                    {
+                        bool go = false;
+                        int newi = 0;
+                        foreach (var arr in bigDataIn)
                         {
-                            if ((i % 4) != 0)
+                            for (int i = 0; i < arr.Length; i++)
                             {
-                                if ((arr[i] == Convert.ToInt32(Mh, 2)) 
-                                    && (arr[i + 1] == Convert.ToInt32(Mm, 2)) 
-                                    && ((arr[i + 2]) == Convert.ToInt32(Ml, 2))
-                                    // && ((arr[i + 3]) == Convert.ToInt32(B, 2))
-                                    )
+                                if ((i < 128) && (arr[i + 3] == 508)) go = true;
+                                if (go)
                                 {
-                                    lbDigital.Items.Add(String.Format("Frame #{0}, {1}", bigDigitalInfo.Count + 1, digitalCounter));
-                                    digitalFrame[0] = digitalCounter;
-                                    bigDigitalInfo.Add(digitalFrame);
-                                    digitalFrame = new int[32768];
-                                    digitalCounter = 1;
+                                    newi++;
+                                    if (newi % 4 != 0)
+                                    {
+                                        dataOut.Write((byte)(arr[i] >> 8));
+                                        dataOut.Write((byte)arr[i]);
+                                    }
+                                    if ((i>1000) && (arr[i] ==0 && arr[i-1] == 0))
+                                    {
+                                        newi = 3;
+                                    }
                                 }
-                                digitalFrame[digitalCounter] = arr[i];
-                                digitalCounter++;
                             }
                         }
-                        bigDigitalInfo.Add(digitalFrame);
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine("Ошибка ввода-вывода файла: " + ex.Message);
+                        return;
+                    }
+                    dataOut.Close();
 
+                    double progress = 0.0f;
+                    double step = 100.0f / (65535);
+                    if (File.Exists(fileName))
+                    {
+                        using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+                        {
+                            uint count = 0;
+                            uint digitalCount = 0;
+                            uint dat = 0;
+                            uint[] digitalFrame = new uint[300];
+
+                            while (reader.BaseStream.Position < 65535)//!= reader.BaseStream.Length)
+                            {
+                                dat = (uint)(reader.ReadByte() << 8);
+                                dat += (uint)(reader.ReadByte());
+                                uint marker0 = 0;
+                                uint marker1 = 0;
+                                uint marker2 = 0;
+                                uint marker3 = 0;
+                                digitalFrame[digitalCount] = dat;
+                                if ((digitalFrame[digitalCount] == 0x00CA)                                 //M ~B
+                                    && (digitalFrame[digitalCount - 1] == 0x0760) 
+                                    && (digitalFrame[digitalCount - 2] == 0x010A)
+                                    && (digitalFrame[digitalCount - 3] == 0x07CD) ||
+                                    (digitalFrame[digitalCount] == 0x0735)                                 //M B
+                                    && (digitalFrame[digitalCount - 1] == 0x0763)
+                                    && (digitalFrame[digitalCount - 2] == 0x010A)
+                                    && (digitalFrame[digitalCount - 3] == 0x07CD) ||
+                                    (digitalFrame[digitalCount] == 0x0735)                                 //~M B
+                                    && (digitalFrame[digitalCount - 1] == 0x009F)
+                                    && (digitalFrame[digitalCount - 2] == 0x06F5)
+                                    && (digitalFrame[digitalCount - 3] == 0x0032) ||
+                                    (digitalFrame[digitalCount] == 0x00CA)                                 //~M ~B
+                                    && (digitalFrame[digitalCount - 1] == 0x009C)
+                                    && (digitalFrame[digitalCount - 2] == 0x06F5)
+                                    && (digitalFrame[digitalCount - 3] == 0x0032)
+                                    )
+                                {
+                                    marker3 = digitalFrame[digitalCount];
+                                    marker2 = digitalFrame[digitalCount - 1];
+                                    marker1 = digitalFrame[digitalCount - 2];
+                                    marker0 = digitalFrame[digitalCount - 3];
+                                    bigDigitalInfo.Add(digitalFrame);
+                                    digitalFrame = new uint[300];
+                                    lbDigital.Items.Add(String.Format("Frame #{0}", bigDigitalInfo.Count));
+                                    digitalFrame[0] = marker0;
+                                    digitalFrame[1] = marker1;
+                                    digitalFrame[2] = marker2;
+                                    digitalFrame[3] = marker3;
+                                    digitalCount = 3;
+                                }
+                                digitalCount++;
+                            }
+                        }
                     }
                 }
             }
@@ -111,6 +176,11 @@ namespace TLM_parser
         private void lbCycles_SelectedIndexChanged(object sender, EventArgs e)
         {
             rtbMemoshka.Clear();
+            rtbMemoshka.Visible = true;
+            rtbD0.Visible = false;
+            rtbD1.Visible = false;
+            rtbD2.Visible = false;
+            rtbD3.Visible = false;
             lbCycles.Enabled = false;
             int index;
             pbMain.Value = 0;
@@ -122,10 +192,7 @@ namespace TLM_parser
             {
                 if ((i % 8 == 0) && (i != 16))
                     rtbMemoshka.AppendText("\r\n");
-                
-                //if (i % 4 != 0)
                     rtbMemoshka.AppendText(Convert.ToString(bigDataIn[index][i]/*, 2*/).PadLeft(4, '0') + "\t");
-                
                 progress += step;
                 pbMain.Value = (int)progress;
             }
@@ -137,6 +204,11 @@ namespace TLM_parser
         private void lbDigital_SelectedIndexChanged(object sender, EventArgs e)
         {
             rtbMemoshka.Clear();
+            rtbMemoshka.Visible = false;
+            rtbD0.Visible = true;
+            rtbD1.Visible = true;
+            rtbD2.Visible = true;
+            rtbD3.Visible = true;
             lbDigital.Enabled = false;
             int index;
             pbMain.Value = 0;
@@ -144,15 +216,33 @@ namespace TLM_parser
             double progress = 0.0f;
             double step = 100.0f / (bigDigitalInfo[index][0]);
 
-            for (int i = 0; i < bigDigitalInfo[index][0]; i++)
+            for (int i = 0; i < bigDigitalInfo[index].Length; i++)
             {
-                if (i % 6 == 0)
-                    rtbMemoshka.AppendText("\r\n");
-                rtbMemoshka.AppendText(Convert.ToString(bigDigitalInfo[index][i]).PadLeft(4, '0') + "\t");
+                if (i % 10 == 0)
+                {
+                    rtbD0.AppendText("\r\n");
+                    rtbD1.AppendText("\r\n");
+                    rtbD2.AppendText("\r\n");
+                    rtbD3.AppendText("\r\n");
+                }
+                rtbD0.AppendText(Convert.ToString(bigDigitalInfo[index][i]).PadLeft(4, '0') + "\t");
+                rtbD1.AppendText(Convert.ToString(bigDigitalInfo[index + 1][i]).PadLeft(4, '0') + "\t");
+                rtbD2.AppendText(Convert.ToString(bigDigitalInfo[index + 2][i]).PadLeft(4, '0') + "\t");
+                rtbD3.AppendText(Convert.ToString(bigDigitalInfo[index + 3][i]).PadLeft(4, '0') + "\t");
             }
             pbMain.Value = 100;
             lbDigital.Enabled = true;
-            Clipboard.SetText(rtbMemoshka.Text);
+//            Clipboard.SetText(rtbMemoshka.Text);
+        }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            M.PadLeft(32, '0');
+            uint i;
+            i = Convert.ToUInt32(M);
+
+            tbTest.Text = i.ToString() + "\r\n";
+            tbTest.AppendText((~i).ToString());
         }
     }
 }
