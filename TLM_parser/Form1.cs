@@ -166,6 +166,7 @@ namespace TLM_parser
                                     digitalCount = 3;
                                 }
                                 digitalCount++;
+                                if (digitalCount == 299) digitalCount = 0;
                             }
                         }
                     }
@@ -176,6 +177,10 @@ namespace TLM_parser
         private void lbCycles_SelectedIndexChanged(object sender, EventArgs e)
         {
             rtbMemoshka.Clear();
+            rtbD0.Clear();
+            rtbD1.Clear();
+            rtbD2.Clear();
+            rtbD3.Clear();
             rtbMemoshka.Visible = true;
             rtbD0.Visible = false;
             rtbD1.Visible = false;
@@ -204,6 +209,10 @@ namespace TLM_parser
         private void lbDigital_SelectedIndexChanged(object sender, EventArgs e)
         {
             rtbMemoshka.Clear();
+            rtbD0.Clear();
+            rtbD1.Clear();
+            rtbD2.Clear();
+            rtbD3.Clear();
             rtbMemoshka.Visible = false;
             rtbD0.Visible = true;
             rtbD1.Visible = true;
